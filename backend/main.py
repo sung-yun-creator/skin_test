@@ -330,6 +330,27 @@ def normalize_llm_result(result, selected_ingr):
     return result
 
 
+def build_care_solution_message(base_message, ingredients, products):
+    ingredient_names = [
+        str(ingredient.get("name", "")).strip()
+        for ingredient in ingredients or []
+        if str(ingredient.get("name", "")).strip()
+    ][:2]
+    product_names = [
+        str(product.get("name", "")).strip()
+        for product in products or []
+        if str(product.get("name", "")).strip()
+    ][:2]
+
+    message_parts = [str(base_message or "").strip()]
+    if ingredient_names:
+        message_parts.append(f"추천 성분은 {'와 '.join(ingredient_names)} 중심으로 잡아 피부 톤과 장벽 균형을 함께 관리하는 방향이 좋습니다.")
+    if product_names:
+        message_parts.append(f"추천 제품 후보는 {', '.join(product_names)}입니다.")
+
+    return "\n".join(part for part in message_parts if part)
+
+
 def ask_gemini(score, status, selected_ingr):
     api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     if not api_key:
@@ -353,7 +374,7 @@ uri는 제품 상세 URL을 확실히 아는 경우에만 상세 URL로 쓰고, 
 반드시 아래 JSON 형식만 출력하라. 마크다운은 쓰지 마라.
 
 {{
-  "message": "사용자에게 보여줄 2문장 이내의 맞춤 분석 메시지",
+  "message": "사용자에게 보여줄 2~3문장의 맞춤 분석 메시지. 추천 성분 2개와 추천 제품명 1~2개가 자연스럽게 연결될 여지를 남겨라.",
   "advice": ["짧은 케어 루틴 1", "짧은 케어 루틴 2", "짧은 케어 루틴 3"],
   "ingredients": [
     {{"name": "성분명", "category": "카테고리", "effectiveness": "효과 설명"}},
@@ -427,13 +448,18 @@ async def analyze_skin(file: UploadFile = File(...)):
 
     # 3. LLM 맞춤 응답 구성
     llm_result = ask_gemini(score, status, selected_ingr)
+    care_solution_message = build_care_solution_message(
+        llm_result.get("message"),
+        llm_result.get("ingredients"),
+        llm_result.get("products")
+    )
 
     return {
         "score": score,
         "status": status,
         "status_color": status_color,
         "ingredient": selected_ingr,
-        "message": llm_result["message"],
+        "message": care_solution_message,
         "advice": llm_result["advice"],
         "ingredients": llm_result["ingredients"],
         "products": llm_result["products"]

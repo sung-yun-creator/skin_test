@@ -219,8 +219,14 @@ const DailyTips = () => {
 // === [메인 App] ===
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authMode, setAuthMode] = useState('login');
   const [userId, setUserId] = useState('');
   const [userPw, setUserPw] = useState('');
+  const [signupId, setSignupId] = useState('');
+  const [signupPw, setSignupPw] = useState('');
+  const [signupName, setSignupName] = useState('');
+  const [signupNotice, setSignupNotice] = useState('');
+  const [idCheckMessage, setIdCheckMessage] = useState('');
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
@@ -228,6 +234,17 @@ function App() {
   const [displayedMessage, setDisplayedMessage] = useState("");
 
   const handleLogin = (e) => { if (e) e.preventDefault(); setIsLoggedIn(true); };
+  const handleSignup = (e) => {
+    if (e) e.preventDefault();
+    setUserId(signupId || signupName || '');
+    setUserPw('');
+    setSignupNotice('회원가입이 완료되었습니다. 로그인 후 피부 분석을 시작하세요.');
+    setIdCheckMessage('');
+    setAuthMode('login');
+  };
+  const handleCheckSignupId = () => {
+    setIdCheckMessage(signupId ? '사용 가능한 아이디입니다.' : '아이디를 입력해주세요.');
+  };
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
@@ -253,17 +270,21 @@ function App() {
   }, [result]);
 
   const handleUpload = async () => {
-    if (!file) return;
-    setLoading(true); setResult(null);
+    if (!file || loading) return;
+    setLoading(true);
+    setResult(null);
     const formData = new FormData();
     formData.append('file', file);
     try {
-      setTimeout(async () => {
-        const res = await axios.post('http://localhost:8000/analyze', formData);
-        setResult(res.data);
-        setLoading(false);
-      }, 2000);
-    } catch (err) { console.error(err); setLoading(false); }
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      const res = await axios.post('http://localhost:8000/analyze', formData, { timeout: 60000 });
+      setResult(res.data);
+    } catch (err) {
+      console.error(err);
+      alert('분석 중 오류가 발생했습니다. 백엔드 서버와 API 키 설정을 확인해주세요.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isLoggedIn) {
@@ -273,14 +294,37 @@ function App() {
         <div style={{ position: 'absolute', bottom: '10%', right: '5%', width: '400px', height: '400px', background: 'rgba(77, 97, 255, 0.05)', borderRadius: '50%', filter: 'blur(80px)', animation: 'float 10s infinite ease-in-out' }} />
         <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(15px)', padding: '50px 45px', borderRadius: '16px', boxShadow: '0 25px 60px -15px rgba(255, 77, 148, 0.15)', width: '90%', maxWidth: '420px', textAlign: 'center', zIndex: 10, border: '1px solid rgba(255, 255, 255, 0.6)', boxSizing: 'border-box' }}>
           <div style={{ width: '75px', height: '75px', backgroundColor: '#ff4d94', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 30px', boxShadow: '0 10px 25px rgba(255, 77, 148, 0.3)' }}><Sparkles size={38} color="white" fill="white" /></div>
-          <h2 style={{ color: '#1a1a1a', fontSize: '1.9rem', fontWeight: '900', margin: '0 0 12px 0' }}>Skin AI Specialist</h2>
-          <p style={{ color: '#888', fontSize: '1rem', marginBottom: '35px' }}>당신만을 위한 정밀 피부 진단 솔루션</p>
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            <div style={{ position: 'relative' }}><input type="text" placeholder="아이디" value={userId} onChange={(e) => setUserId(e.target.value)} style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '14px', border: '1px solid #eee', outline: 'none', boxSizing: 'border-box', fontSize: '1rem', backgroundColor: '#fff' }} /><User size={20} color="#bbb" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} /></div>
-            <div style={{ position: 'relative' }}><input type="password" placeholder="비밀번호" value={userPw} onChange={(e) => setUserPw(e.target.value)} style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '14px', border: '1px solid #eee', outline: 'none', boxSizing: 'border-box', fontSize: '1rem', backgroundColor: '#fff' }} /><Lock size={20} color="#bbb" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} /></div>
-            <button type="button" onClick={handleLogin} style={{ backgroundColor: '#ff4d94', color: '#fff', padding: '15px', borderRadius: '12px', border: 'none', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px', boxShadow: '0 12px 25px rgba(255, 77, 148, 0.25)' }}>로그인</button>
-          </form>
-          <div style={{ marginTop: '25px', display: 'flex', justifyContent: 'center', gap: '20px', fontSize: '0.9rem', color: '#999' }}><span style={{ cursor: 'pointer' }}>회원가입</span><span style={{ color: '#eee' }}>|</span><span style={{ cursor: 'pointer' }}>아이디/비밀번호 찾기</span></div>
+          <h2 style={{ color: '#1a1a1a', fontSize: '1.9rem', fontWeight: '900', margin: '0 0 12px 0' }}>{authMode === 'login' ? 'Skin AI Specialist' : 'Create Skin Profile'}</h2>
+          <p style={{ color: '#888', fontSize: '1rem', marginBottom: '35px' }}>{authMode === 'login' ? '당신만을 위한 정밀 피부 진단 솔루션' : '간단한 정보 입력 후 바로 피부 분석을 시작하세요'}</p>
+          {authMode === 'login' && signupNotice && (
+            <div style={{ margin: '-18px 0 18px 0', padding: '10px 14px', borderRadius: '12px', backgroundColor: '#fff5f8', color: '#ff4d94', fontSize: '0.85rem', fontWeight: 600 }}>
+              {signupNotice}
+            </div>
+          )}
+          {authMode === 'login' ? (
+            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <div style={{ position: 'relative' }}><input type="text" placeholder="아이디" value={userId} onChange={(e) => { setUserId(e.target.value); setSignupNotice(''); }} style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '14px', border: '1px solid #eee', outline: 'none', boxSizing: 'border-box', fontSize: '1rem', backgroundColor: '#fff' }} /><User size={20} color="#bbb" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} /></div>
+              <div style={{ position: 'relative' }}><input type="password" placeholder="비밀번호" value={userPw} onChange={(e) => setUserPw(e.target.value)} style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '14px', border: '1px solid #eee', outline: 'none', boxSizing: 'border-box', fontSize: '1rem', backgroundColor: '#fff' }} /><Lock size={20} color="#bbb" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} /></div>
+              <button type="button" onClick={handleLogin} style={{ backgroundColor: '#ff4d94', color: '#fff', padding: '15px', borderRadius: '12px', border: 'none', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px', boxShadow: '0 12px 25px rgba(255, 77, 148, 0.25)' }}>로그인</button>
+            </form>
+          ) : (
+            <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <div style={{ position: 'relative' }}><input type="text" placeholder="이름" value={signupName} onChange={(e) => setSignupName(e.target.value)} style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '14px', border: '1px solid #eee', outline: 'none', boxSizing: 'border-box', fontSize: '1rem', backgroundColor: '#fff' }} /><User size={20} color="#bbb" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} /></div>
+              <div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <div style={{ position: 'relative', flex: 1 }}><input type="text" placeholder="아이디" value={signupId} onChange={(e) => { setSignupId(e.target.value); setIdCheckMessage(''); }} style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '14px', border: '1px solid #eee', outline: 'none', boxSizing: 'border-box', fontSize: '1rem', backgroundColor: '#fff' }} /><User size={20} color="#bbb" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} /></div>
+                  <button type="button" onClick={handleCheckSignupId} style={{ padding: '0 14px', borderRadius: '12px', border: '1px solid #ffb8d2', backgroundColor: '#fff5f8', color: '#ff4d94', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}>중복확인</button>
+                </div>
+                {idCheckMessage && <p style={{ margin: '6px 0 0 4px', textAlign: 'left', fontSize: '0.78rem', color: signupId ? '#00a862' : '#ff4d4d' }}>{idCheckMessage}</p>}
+              </div>
+              <div style={{ position: 'relative' }}><input type="password" placeholder="비밀번호" value={signupPw} onChange={(e) => setSignupPw(e.target.value)} style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '14px', border: '1px solid #eee', outline: 'none', boxSizing: 'border-box', fontSize: '1rem', backgroundColor: '#fff' }} /><Lock size={20} color="#bbb" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} /></div>
+              <button type="submit" style={{ backgroundColor: '#ff4d94', color: '#fff', padding: '15px', borderRadius: '12px', border: 'none', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px', boxShadow: '0 12px 25px rgba(255, 77, 148, 0.25)' }}>가입하고 시작하기</button>
+            </form>
+          )}
+          <div style={{ marginTop: '25px', display: 'flex', justifyContent: 'center', gap: '20px', fontSize: '0.9rem', color: '#999' }}>
+            <span onClick={() => { setAuthMode(authMode === 'login' ? 'signup' : 'login'); setSignupNotice(''); }} style={{ cursor: 'pointer' }}>{authMode === 'login' ? '회원가입' : '로그인으로 돌아가기'}</span>
+            {authMode === 'login' && <><span style={{ color: '#eee' }}>|</span><span style={{ cursor: 'pointer' }}>아이디/비밀번호 찾기</span></>}
+          </div>
           <div style={{ marginTop: '35px', borderTop: '1px solid #f2f2f2', paddingTop: '20px' }}><p style={{ fontSize: '0.85rem', color: '#ccc', margin: 0 }}>© 2026 Team Skin-Specialist</p></div>
         </div>
       </div>
@@ -336,7 +380,7 @@ function App() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px', color: result.status_color, fontSize: '0.8rem' }}>
                   <AlertCircle size={18} /><strong>AI 맞춤 케어 솔루션</strong>
                 </div>
-                <p style={{ fontSize: '1rem', lineHeight: '1.6', margin: 0, fontWeight: '300', letterSpacing: '-0.3px' }}>
+                <p style={{ fontSize: '1rem', lineHeight: '1.7', margin: 0, fontWeight: '300', letterSpacing: '-0.3px', whiteSpace: 'pre-line' }}>
                   {displayedMessage}<span style={{ color: result.status_color, fontWeight: 'bold', animation: 'blink 1s step-end infinite' }}>|</span>
                 </p>
               </div>
