@@ -161,7 +161,7 @@ const AIAdviceCard = ({ advice, summary }) => {
       
       <div style={{ marginBottom: '12px', padding: '12px', backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: '12px', border: '1px solid #e0e7ff', flexShrink: 0 }}>
         <p style={{ fontSize: '0.8rem', lineHeight: 1.6, color: '#334155', margin: 0, fontWeight: '500' }}>
-          {summary}<span style={{ color: '#6366f1', fontWeight: 'bold', animation: 'blink 1s step-end infinite' }}>|</span>
+          {summary}
         </p>
       </div>
 
@@ -181,14 +181,22 @@ const AIAdviceCard = ({ advice, summary }) => {
 };
 
 // [컴포넌트 6] 일일 케어 팁
-const DailyTips = () => {
+const DailyTips = ({ result }) => {
+  const ingredientNames = (result?.ingredients || [])
+    .map((ingredient) => ingredient.name)
+    .filter(Boolean)
+    .slice(0, 2);
+  const mainIngredient = ingredientNames[0] || result?.ingredient || "추천 성분";
+  const supportIngredient = ingredientNames[1] || "보습 성분";
+  const needsFocusedCare = result?.status === "위험" || result?.status === "주의";
+
   const tips = [
-    { icon: Sun, time: "아침", title: "자외선 차단", description: "SPF 50+ 선크림 사용", bg: "linear-gradient(135deg, #facc15 0%, #fb923c 100%)" },
-    { icon: Coffee, time: "오전", title: "수분 섭취", description: "물 2L 이상 마시기", bg: "linear-gradient(135deg, #60a5fa 0%, #22d3ee 100%)" },
-    { icon: Apple, time: "점심", title: "항산화 식단", description: "비타민C 채소 섭취", bg: "linear-gradient(135deg, #4ade80 0%, #34d399 100%)" },
-    { icon: Droplets, time: "오후", title: "보습 케어", description: "미스트 수분 보충", bg: "linear-gradient(135deg, #2dd4bf 0%, #60a5fa 100%)" },
-    { icon: Moon, time: "저녁", title: "이중 세안", description: "오일+폼 깨끗하게", bg: "linear-gradient(135deg, #818cf8 0%, #c084fc 100%)" },
-    { icon: Shield, time: "야간", title: "집중 관리", description: "나이트 세럼 재생", bg: "linear-gradient(135deg, #c084fc 0%, #f472b6 100%)" }
+    { icon: Sun, time: "아침", title: "자외선 차단", description: needsFocusedCare ? "SPF 50+ 충분히 덧바르기" : "SPF 30+ 이상 꾸준히 사용", bg: "linear-gradient(135deg, #facc15 0%, #fb923c 100%)" },
+    { icon: Coffee, time: "오전", title: "수분 유지", description: "물 섭취와 실내 습도 관리", bg: "linear-gradient(135deg, #60a5fa 0%, #22d3ee 100%)" },
+    { icon: Apple, time: "점심", title: "컨디션 관리", description: `${supportIngredient} 케어에 맞춘 휴식`, bg: "linear-gradient(135deg, #4ade80 0%, #34d399 100%)" },
+    { icon: Droplets, time: "오후", title: "장벽 보습", description: needsFocusedCare ? "건조하면 얇게 보습 보충" : "가벼운 수분감 유지", bg: "linear-gradient(135deg, #2dd4bf 0%, #60a5fa 100%)" },
+    { icon: Moon, time: "저녁", title: "저자극 세안", description: "문지르지 않고 부드럽게 세안", bg: "linear-gradient(135deg, #818cf8 0%, #c084fc 100%)" },
+    { icon: Shield, time: "야간", title: "집중 관리", description: `${mainIngredient} 루틴으로 톤 관리`, bg: "linear-gradient(135deg, #c084fc 0%, #f472b6 100%)" }
   ];
 
   return (
@@ -214,6 +222,21 @@ const DailyTips = () => {
       </div>
     </div>
   );
+};
+
+const buildAdviceSummary = (result) => {
+  if (!result) return "AI가 피부 상태를 분석해 맞춤 루틴을 준비하고 있습니다.";
+
+  const ingredientNames = (result.ingredients || [])
+    .map((ingredient) => ingredient.name)
+    .filter(Boolean)
+    .slice(0, 2);
+
+  if (ingredientNames.length > 0) {
+    return `${result.status} 단계에 맞춰 ${ingredientNames.join(", ")} 성분을 중심으로 아침에는 보호, 저녁에는 진정과 톤 관리를 이어가는 루틴을 권장합니다.`;
+  }
+
+  return `${result.status} 단계에 맞춰 자외선 차단, 보습, 저자극 세안을 중심으로 피부 컨디션을 안정적으로 관리해 주세요.`;
 };
 
 // === [메인 App] ===
@@ -397,10 +420,10 @@ function App() {
                 />  
                 {/* 아랫줄 3개 */}
                 <AIAdviceCard 
-                  summary={displayedMessage || "AI가 피부 상태를 실시간 분석 중입니다..."}
+                  summary={buildAdviceSummary(result)}
                   advice={result.advice}
                 />
-                <DailyTips />
+                <DailyTips result={result} />
                 <ProductRecommendation products={result.products} />
               </div>
 
