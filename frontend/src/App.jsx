@@ -100,12 +100,11 @@ const IngredientCard = ({ ingredients, skinType, onButtonClick }) => {
 };
 
 // [컴포넌트 4] AI 추천 제품 카드
-const ProductRecommendation = () => {
-  const products = [
-    { name: "화이트닝 앰플", brand: "스킨 랩", rating: 4.7, price: "38,000원", ingredients: ["알부틴 2%", "트라넥삼산", "글루타치온"], match: 95 },
-    { name: "톤업 크림", brand: "퓨어 뷰티", rating: 4.9, price: "52,000원", ingredients: ["나이아신아마이드", "아스코르빅애씨드", "알파-알부틴"], match: 92 }
-  ];
-  const handleProductClick = (productName) => { window.open(`https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${productName}`); };
+const ProductRecommendation = ({ products }) => {
+  const displayedProducts = products || [];
+  const handleProductClick = (product) => {
+    window.open(product.uri || `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${product.name}`);
+  };
 
   return (
     <div style={{ padding: '16px', borderRadius: '16px', border: '2px solid #bfdbfe', background: 'linear-gradient(135deg, #eff6ff 0%, #ecfeff 100%)', boxShadow: '0 10px 25px rgba(0, 0, 0, 0.05)', display: 'flex', flexDirection: 'column', height: 'auto', boxSizing: 'border-box', minHeight: 0 }}>
@@ -117,7 +116,7 @@ const ProductRecommendation = () => {
         </div>
       </div>
       <div className="custom-scrollbar" style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, overflowY: 'auto', paddingRight: '4px' }}>
-        {products.map((product, index) => (
+        {displayedProducts.map((product, index) => (
           <div key={index} style={{ padding: '12px', borderRadius: '16px', backgroundColor: '#fff', border: '2px solid #dbeafe', transition: 'all 0.3s' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
               <div style={{ flex: 1 }}>
@@ -134,11 +133,11 @@ const ProductRecommendation = () => {
               </div>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
-              {product.ingredients.map((ingredient, idx) => (
+              {(product.ingredients || []).map((ingredient, idx) => (
                 <span key={idx} style={{ padding: '4px 8px', backgroundColor: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', borderRadius: '8px', fontSize: '0.7rem', fontWeight: '500' }}>{ingredient}</span>
               ))}
             </div>
-            <button onClick={() => handleProductClick(product.name)} style={{ width: '100%', padding: '8px', background: 'linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%)', color: '#fff', borderRadius: '8px', border: 'none', fontWeight: 'bold', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+            <button onClick={() => handleProductClick(product)} style={{ width: '100%', padding: '8px', background: 'linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%)', color: '#fff', borderRadius: '8px', border: 'none', fontWeight: 'bold', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
               상세정보 보기 <ExternalLink size={14} />
             </button>
           </div>
@@ -340,19 +339,16 @@ function App() {
                 <ProgressChart result={result} />
                 <IngredientCard
                   skinType="복합성"
-                  ingredients={[
-                    { name: result.ingredient, category: '미백', effectiveness: '멜라닌 생성을 억제하고 피부 톤을 균일하게 개선합니다.' },
-                    { name: '비타민C', category: '항산화', effectiveness: '강력한 항산화 효과로 피부 밝기를 개선합니다.' }
-                  ]}
+                  ingredients={result.ingredients}
                   onButtonClick={() => window.open(`https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${result.ingredient}`)}
                 />  
                 {/* 아랫줄 3개 */}
                 <AIAdviceCard 
                   summary={displayedMessage || "AI가 피부 상태를 실시간 분석 중입니다..."}
-                  advice={["외출 30분 전 자외선 차단제 필수", "저녁 세안 후 비타민C 앰플 사용", "주 1~2회 가벼운 각질 제거"]}
+                  advice={result.advice}
                 />
                 <DailyTips />
-                <ProductRecommendation />
+                <ProductRecommendation products={result.products} />
               </div>
 
               {/* 하단 검은색 AI 가이드 박스 유지 */}
