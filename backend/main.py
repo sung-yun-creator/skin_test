@@ -27,7 +27,7 @@ app.add_middleware(
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = models.resnet18()
 model.fc = nn.Linear(model.fc.in_features, 1)
-model.load_state_dict(torch.load("model/skin_pro_final.pth", map_location=device))
+model.load_state_dict(torch.load("model/skin_model_final_full_pro.pth", map_location=device))
 model.to(device)
 model.eval()
 
