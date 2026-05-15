@@ -330,10 +330,19 @@ function App() {
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {result ? (
-            <section style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', animation: 'fadeIn 0.5s' }}>
-              
+            <section style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px', animation: 'fadeIn 0.5s', marginTop: '-4px' }}>
+              {/* 하단 검은색 AI 가이드 박스 유지 */}
+              <div style={{ padding: '10px 25px', borderRadius: '12px', backgroundColor: '#1a1a1a', color: '#fff', flexShrink: 0, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px', color: result.status_color, fontSize: '0.8rem' }}>
+                  <AlertCircle size={18} /><strong>AI 맞춤 케어 솔루션</strong>
+                </div>
+                <p style={{ fontSize: '1rem', lineHeight: '1.6', margin: 0, fontWeight: '300', letterSpacing: '-0.3px' }}>
+                  {displayedMessage}<span style={{ color: result.status_color, fontWeight: 'bold', animation: 'blink 1s step-end infinite' }}>|</span>
+                </p>
+              </div>
+
               {/* 🚨 화면 비율 상관없이 무조건 3개씩 꽉 차게! (3x2 벤토 박스 레이아웃 강제 고정) */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', alignItems: 'stretch' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', alignItems: 'stretch', marginTop: '8px' }}>
                 {/* 윗줄 3개 */}
                 <ScoreCard score={result.score} title="분석 결과" result={result} />
                 <ProgressChart result={result} />
@@ -349,16 +358,6 @@ function App() {
                 />
                 <DailyTips />
                 <ProductRecommendation products={result.products} />
-              </div>
-
-              {/* 하단 검은색 AI 가이드 박스 유지 */}
-              <div style={{ padding: '12px 25px', borderRadius: '12px', backgroundColor: '#1a1a1a', color: '#fff', flexShrink: 0, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px', color: result.status_color, fontSize: '0.8rem' }}>
-                  <AlertCircle size={18} /><strong>AI 맞춤 케어 솔루션</strong>
-                </div>
-                <p style={{ fontSize: '1rem', lineHeight: '1.6', margin: 0, fontWeight: '300', letterSpacing: '-0.3px' }}>
-                  {displayedMessage}<span style={{ color: result.status_color, fontWeight: 'bold', animation: 'blink 1s step-end infinite' }}>|</span>
-                </p>
               </div>
 
             </section>
