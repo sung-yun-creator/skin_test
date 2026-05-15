@@ -375,20 +375,20 @@ function App() {
           )}
         </div>
       </main>
-      <style>{`
-        * { box-sizing: border-box; }
-        html, body, #root { width: 100%; height: auto; margin: 0; padding: 0; overflow-x: hidden; }
-        body { font-family: "Pretendard", sans-serif; background: #fafafa; }
-        
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        <style>{`
+          * { box-sizing: border-box; }
+          html, body, #root { width: 100%; height: auto; margin: 0; padding: 0; overflow-x: hidden; }
+          body { font-family: "Pretendard", sans-serif; background: #fafafa; }
+          
+          .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+          .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+          .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-        @keyframes blink { 50% { opacity: 0; } }
-      `}</style>
+          @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+          @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+          @keyframes blink { 50% { opacity: 0; } }
+        `}</style>
     </div>
   );
 }
