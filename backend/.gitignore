@@ -1,3 +1,6 @@
 __pycache__/
 .venv/
+.env
+.env.*
+!.env.example
 *.pth  # 모델 파일은 용량이 커서 보통 따로 공유하거나 LFS를 씁니다.
