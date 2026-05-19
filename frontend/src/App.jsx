@@ -367,10 +367,10 @@ function App() {
 
       {/* 🚨 상단 통계 카드 4개 삭제 요청 반영 완료! 바로 메인 컨텐츠로 이어집니다. */}
 
-      <main style={{ flex: 1, backgroundColor: '#fff', borderRadius: '16x', padding: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '15px', overflowY: 'visible' }}>
+      <main style={{ flex: 1, backgroundColor: '#fff', borderRadius: '16px', padding: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '15px', overflowY: 'visible' }}>
         
         <section style={{ display: 'flex', gap: '25px', alignItems: 'center', borderBottom: '1px solid #f0f0f0', paddingBottom: '15px', flexShrink: 0 }}>
-          <div style={{ width: '220px', height: '150px', borderRadius: '16x', overflow: 'hidden', border: '1px solid #eee', flexShrink: 0, boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)' }}>
+          <div style={{ width: '220px', height: '150px', borderRadius: '16px', overflow: 'hidden', border: '1px solid #eee', flexShrink: 0, boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)' }}>
             {preview ? <img src={preview} style={{ width: '100%', height: 'auto', objectFit: 'cover' }}/> : <div style={{ height: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fcfcfc', color: '#ccc' }}><Camera size={30} /></div>}
           </div>
 
@@ -429,7 +429,7 @@ function App() {
 
             </section>
           ) : (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#ccc', backgroundColor: '#fcfcfc', borderRadius: '12x', border: '1px dashed #eee' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#ccc', backgroundColor: '#fcfcfc', borderRadius: '12px', border: '1px dashed #eee' }}>
               <Sparkles size={60} style={{ marginBottom: '15px', opacity: 0.3, color: '#ff4d94' }} />
               <p style={{ fontSize: '1rem', fontWeight: '500' }}>분석할 사진을 선택하고 '분석 시작' 버튼을 눌러주세요.</p>
               <p style={{ fontSize: '0.8rem', opacity: 0.7 }}>실시간 AI 엔진이 피부 상태를 정밀 진단합니다.</p>
