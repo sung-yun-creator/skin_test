@@ -463,4 +463,4 @@ async def analyze_skin(file: UploadFile = File(...)):
         "advice": llm_result["advice"],
         "ingredients": llm_result["ingredients"],
         "products": llm_result["products"]
-    }
+    }   
