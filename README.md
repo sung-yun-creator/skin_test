@@ -1,4 +1,4 @@
-# 🌸 Skin AI Specialist
+# 🌸 Derma-Solution-AI Specialist
 AI 기반 개인 맞춤형 피부 진단 및 토탈 케어 솔루션
 
 ## 🛠 Tech Stack
