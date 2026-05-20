@@ -317,7 +317,7 @@ function App() {
         <div style={{ position: 'absolute', bottom: '10%', right: '5%', width: '400px', height: '400px', background: 'rgba(77, 97, 255, 0.05)', borderRadius: '50%', filter: 'blur(80px)', animation: 'float 10s infinite ease-in-out' }} />
         <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(15px)', padding: '50px 45px', borderRadius: '16px', boxShadow: '0 25px 60px -15px rgba(255, 77, 148, 0.15)', width: '90%', maxWidth: '420px', textAlign: 'center', zIndex: 10, border: '1px solid rgba(255, 255, 255, 0.6)', boxSizing: 'border-box' }}>
           <div style={{ width: '75px', height: '75px', backgroundColor: '#ff4d94', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 30px', boxShadow: '0 10px 25px rgba(255, 77, 148, 0.3)' }}><Sparkles size={38} color="white" fill="white" /></div>
-          <h2 style={{ color: '#1a1a1a', fontSize: '1.9rem', fontWeight: '900', margin: '0 0 12px 0' }}>{authMode === 'login' ? 'Skin AI Specialist' : 'Create Skin Profile'}</h2>
+          <h2 style={{ color: '#1a1a1a', fontSize: '1.9rem', fontWeight: '900', margin: '0 0 12px 0' }}>{authMode === 'login' ? 'Derma-Solution-AI' : 'Create Skin Profile'}</h2>
           <p style={{ color: '#888', fontSize: '1rem', marginBottom: '35px' }}>{authMode === 'login' ? '당신만을 위한 정밀 피부 진단 솔루션' : '간단한 정보 입력 후 바로 피부 분석을 시작하세요'}</p>
           {authMode === 'login' && signupNotice && (
             <div style={{ margin: '-18px 0 18px 0', padding: '10px 14px', borderRadius: '12px', backgroundColor: '#fff5f8', color: '#ff4d94', fontSize: '0.85rem', fontWeight: 600 }}>
@@ -348,7 +348,7 @@ function App() {
             <span onClick={() => { setAuthMode(authMode === 'login' ? 'signup' : 'login'); setSignupNotice(''); }} style={{ cursor: 'pointer' }}>{authMode === 'login' ? '회원가입' : '로그인으로 돌아가기'}</span>
             {authMode === 'login' && <><span style={{ color: '#eee' }}>|</span><span style={{ cursor: 'pointer' }}>아이디/비밀번호 찾기</span></>}
           </div>
-          <div style={{ marginTop: '35px', borderTop: '1px solid #f2f2f2', paddingTop: '20px' }}><p style={{ fontSize: '0.85rem', color: '#ccc', margin: 0 }}>© 2026 Team Skin-Specialist</p></div>
+          
         </div>
       </div>
     );
